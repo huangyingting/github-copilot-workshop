@@ -1,0 +1,169 @@
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  await mermaid.run({ querySelector: 'code.language-mermaid' });
+</script>
+
+<style>
+  :root {
+    /* Tunables */
+    --btn-bg: #dbeafe;                   /* light blue (like screenshot) */
+    --btn-bg-hover: #c7d2fe;             /* slightly darker on hover */
+    --btn-fg: #0f172a;                   /* dark text, unchanged on hover */
+    --btn-border: rgba(2, 6, 23, 0.08);  /* subtle border */
+    --btn-shadow: 0 1px 2px rgba(2,6,23,.08), 0 4px 10px rgba(2,6,23,.06);
+    --btn-shadow-hover: 0 2px 4px rgba(2,6,23,.10), 0 6px 14px rgba(2,6,23,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --btn-bg: #1f2937;        /* neutral dark surface */
+      --btn-bg-hover: #273244;  /* slight hover tint */
+      --btn-fg: #e5e7eb;        /* light text, unchanged on hover */
+      --btn-border: rgba(255,255,255,.12);
+      --btn-shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 10px rgba(0,0,0,.35);
+      --btn-shadow-hover: 0 2px 6px rgba(0,0,0,.45), 0 8px 16px rgba(0,0,0,.4);
+    }
+  }
+
+  .issue-fab {
+    position: fixed;
+    inset-inline-end: 16px;
+    inset-block-end: calc(16px + env(safe-area-inset-bottom, 0));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    /* width: auto by default, we’ll sync widths via JS */
+    padding: 8px 10px; /* was 14px 18px */
+    border-radius: 9999px;
+    background-color: var(--btn-bg);
+    color: var(--btn-fg);
+    text-decoration: none;
+    border: 1px solid var(--btn-border);
+    box-shadow: var(--btn-shadow);
+    z-index: 9999;
+    transition: background-color .15s ease, box-shadow .15s ease, transform .08s ease;
+    will-change: background-color, box-shadow, transform;
+    max-width: 56px;   /* cap width for compact buttons */
+  }
+  .issue-fab:hover {
+    background-color: var(--btn-bg-hover); /* text color intentionally unchanged */
+    box-shadow: var(--btn-shadow-hover);
+    transform: translateY(-1px);
+  }
+  .issue-fab:active { transform: translateY(0); }
+  .issue-fab:focus-visible {
+    outline: 3px solid rgba(59,130,246,.35);
+    outline-offset: 2px;
+  }
+
+  /* Stack the second button above the first */
+  .issue-fab--docs {
+    inset-block-end: calc(74px + env(safe-area-inset-bottom, 0));
+  }
+
+  .issue-fab__label {
+    /* hide inline label if present anywhere */
+    display: none;
+  }
+  .issue-fab__icon {
+    font-size: 1.05em; /* was 1.2em */
+    line-height: 1;
+  }
+
+  /* Tooltip that pops up on hover */
+  .issue-fab__tooltip {
+    position: absolute;
+    inset-inline-end: calc(100% + 10px); /* place to the left of the button */
+    inset-block-start: 50%;
+    transform: translateY(-50%) scale(.98);
+    opacity: 0;
+    pointer-events: none;
+    background-color: var(--btn-bg);
+    color: var(--btn-fg);
+    border: 1px solid var(--btn-border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    box-shadow: var(--btn-shadow);
+    font: 14px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    white-space: nowrap;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 10000; /* above the button */
+  }
+  .issue-fab:hover .issue-fab__tooltip {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .issue-fab { transition: none; }
+    .issue-fab:hover { transform: none; }
+    .issue-fab__tooltip { transition: none; }
+  }
+</style>
+
+<script>
+(function () {
+  const base = "https://github.com/huangyingting/github-copilot-workshop/issues/new";
+
+  // Code bug button
+  const bugParams = new URLSearchParams({
+    template: "bug_report.md",
+    labels: "bug",
+    title: "[Bug]: "
+  });
+  const bugBtn = document.createElement("a");
+  bugBtn.href = base + "?" + bugParams.toString();
+  bugBtn.target = "_blank";
+  bugBtn.rel = "noopener";
+  bugBtn.className = "issue-fab";
+  bugBtn.ariaLabel = "Report a code bug";
+  // replace visible text with icon + tooltip
+  bugBtn.innerHTML = '<span class="issue-fab__icon" aria-hidden="true">🐞</span><span class="issue-fab__tooltip" role="tooltip">Report bug</span>';
+
+  // Docs issue button (include source page)
+  const docsParams = new URLSearchParams({
+    template: "docs_issue.md",
+    labels: "documentation",
+    title: "[Docs]: "
+  });
+  const docsBtn = document.createElement("a");
+  docsBtn.href = base + "?" + docsParams.toString();
+  docsBtn.target = "_blank";
+  docsBtn.rel = "noopener";
+  docsBtn.className = "issue-fab issue-fab--docs";
+  docsBtn.ariaLabel = "Report a documentation issue";
+  // replace visible text with icon + tooltip
+  docsBtn.innerHTML = '<span class="issue-fab__icon" aria-hidden="true">📄</span><span class="issue-fab__tooltip" role="tooltip">Docs issue</span>';
+
+  function equalizeWidths() {
+    // Let natural widths settle first
+    bugBtn.style.width = "";
+    docsBtn.style.width = "";
+    const w1 = bugBtn.getBoundingClientRect().width;
+    const w2 = docsBtn.getBoundingClientRect().width;
+    const max = Math.max(w1, w2);
+    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    const MAX = 56; // px cap to reduce width
+    const target = Math.min(max, MAX, vw * 0.92);
+    const px = Math.ceil(target) + "px";
+    bugBtn.style.width = px;
+    docsBtn.style.width = px;
+  }
+
+  function add() {
+    document.body.appendChild(bugBtn);
+    document.body.appendChild(docsBtn);
+    // Size after paint
+    requestAnimationFrame(equalizeWidths);
+    // Recalculate on resize (e.g., viewport/font changes)
+    window.addEventListener("resize", equalizeWidths, { passive: true });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", add);
+  } else {
+    add();
+  }
+})();
+</script>
