@@ -31,8 +31,8 @@ This workshop guides you through installation, core features, chat capabilities,
 - [Module 6: Copilot Chat](#module-6-copilot-chat)
 - [Module 7: Advanced Features and Agent Mode](#module-7-advanced-features-and-agent-mode)
 - [Module 8: Copilot Spaces](#module-8-copilot-spaces)
-- [Module 9: Hands-on Labs and Use Cases](#module-9-hands-on-labs-and-use-cases)
-- [Next Steps](#next-steps)
+- [Module 9: Use Cases](#module-9-use-cases)
+- [Module 10: Hands-On Exercises](#module-10-hands-on-exercises)
 
 ---
 
@@ -565,7 +565,7 @@ Design an application that runs from kubernetes cluster, list key considerations
 
 ---
 
-## Module 9: Hands-on Labs and Use Cases
+## Module 9: Use Cases
 
 ### Network Operations Planning
 By leveraging the custom chat mode in Github Copilot, you can create a more interactive and tailored experience for network operations planning. Here’s how you can use it:
@@ -760,7 +760,244 @@ Generate a React web application scaffold based on the components and layout def
 ```
 ![Github Copilot Figma](./images/Github-Copilot-Figma.png)
 
-## Next Steps
-- Apply custom instructions and prompts in your repos
-- Explore Copilot Extensions and Spaces for your team workflows
-- Pilot advanced use cases (Azure, MCP, CI/CD integration)
+## Module 10: Hands-On Exercises
+
+### Preparing for the Workshop
+Prerequisites:
+- Visual Studio Code
+- GitHub CLI (gh)
+- GitHub Copilot extension in VS Code
+- GitHub Copilot CLI extension (gh copilot)
+- Azure CLI
+- Logged into both GitHub (gh) and Azure (az)
+
+#### 1. Install Visual Studio Code
+Download: https://code.visualstudio.com/
+
+#### 2. Install GitHub CLI
+Download: https://cli.github.com/
+
+#### 3. Authenticate GitHub CLI
+```bash
+gh auth login
+gh auth status
+```
+
+#### 4. Install GitHub Copilot VS Code Extension
+VS Code Marketplace: https://marketplace.visualstudio.com/items?itemName=GitHub.copilot
+(Also recommended: GitHub Copilot Chat.)
+
+#### 5. Install Copilot CLI Extension
+```bash
+gh extension install github/gh-copilot
+# Update later if needed
+gh extension upgrade github/gh-copilot
+# Verify
+gh copilot --help
+```
+
+#### 6. Install Azure CLI
+Docs: https://learn.microsoft.com/cli/azure/install-azure-cli
+
+
+#### 7. Azure Login
+```bash
+az login
+az account show
+```
+
+#### 8. Optional Quality of Life
+Enable Azure CLI autoupdate where supported or periodically run:
+```bash
+az upgrade --yes
+```
+
+#### 9. Quick Verification Checklist
+```bash
+code --version
+gh --version
+gh auth status
+gh copilot --help
+az account show
+```
+
+### Exercise 1: Azure CLI for Rapid Resource Provisioning
+
+**Objective:** To demonstrate how to use GitHub Copilot in the command line (`gh copilot`) and the `@azure` chat extension to quickly generate complex, multi-step Azure CLI commands.
+
+**Scenario:** A cloud engineer has been tasked with creating the initial resources for a new project. They need to provision a new resource group in the 'West US 3' region, a general-purpose v2 storage account with geo-redundant storage (GRS), and a blob container named 'logs' within that account. This task needs to be completed quickly and accurately without leaving the development environment.
+
+**Hands-On Steps:**
+
+1. Using `gh copilot suggest`: In the VS Code terminal, use the GitHub CLI integration to ask for a command.
+    - Prompt: `gh copilot suggest "az cli command to create a resource group named 'copilot-workshop-rg' in westus3"`
+    - Copilot will provide a suggestion, such as `az group create --name copilot-workshop-rg --location westus3`. Review the command and execute it.
+
+2. Using `@azure` Chat for Complex Commands: Open the Copilot Chat pane in VS Code.
+
+    - Prompt: `@azure generate an Azure CLI command to create a storage account named 'cws<unique_string>' in the 'copilot-workshop-rg' resource group. It must be a StorageV2 kind with the 'Standard_GRS' SKU.`
+
+    - Copilot will leverage its tool to construct the precise command. The output will be a fully formed command like    
+
+    `az storage account create --name "cws..." --resource-group "copilot-workshop-rg" --location "westus3" --sku "Standard_GRS" --kind "StorageV2"`.
+
+3. Chaining Commands: Continue the conversation in the chat pane.
+
+    - Prompt: `@azure now generate the command to create a container named 'logs' in the storage account created in the previous step.`
+
+    - Copilot will maintain the context of the conversation and generate the next command, likely using the account name it just suggested.
+
+4. Verification: Execute the generated commands in the terminal and verify the creation of the resources in the Azure portal.
+
+### Exercise 2: PowerShell for Scheduled Automation Runbooks
+**Objective:** To show how Copilot's inline code completion can accelerate the writing of a PowerShell script suitable for an Azure Automation runbook, including parameter handling, connecting to Azure, and performing an action.
+
+**Scenario:** An automation specialist is tasked with creating a cost-saving measure. They need to write a PowerShell runbook that runs on a schedule, finds all virtual machines tagged with auto-shutdown: true, and gracefully stops them. The script must be robust, handle authentication via a system-assigned managed identity, and include logging.
+
+**Hands-On Steps:**
+
+1. **Setup:** Create a new PowerShell file in VS Code, for example, Stop-TaggedVMs.ps1.
+
+2. **Prompting with Comments:** Start the script with a detailed comment describing its purpose. This comment serves as a powerful prompt for Copilot's inline suggestions.
+    - **Initial Comment:**
+        ```powershell
+        # This script is an Azure Automation runbook.
+        # It connects to Azure using the system-assigned managed identity.
+        # It finds all virtual machines that have a tag named 'auto-shutdown' with a value of 'true'.
+        # It then iterates through the list of VMs and stops each one.
+        # It should include verbose logging for each step.
+        ```
+3. **Generating Boilerplate:** Below the comment, start typing the standard runbook parameter block. Copilot will likely suggest the entire block.
+
+    - Start typing `param(` and accept Copilot's suggestions.
+
+    - Start typing `$connection = Get-AutomationConnection...` or `Connect-AzAccount -Identity`. Copilot will suggest the full connection block.
+
+4. **Generating Core Logic:** After the connection is established, add another comment to guide the next step.
+
+    - **Comment:** # Get all VMs with the specified tag
+
+    - Start typing `$vms = Get-AzVM....` Copilot should suggest the complete command, including the -Tag parameter.
+
+5. **Generating the Loop:** Add a final comment for the operational logic.
+
+    - **Comment:** # Loop through the VMs and stop them
+
+    - Start typing `foreach ($vm in $vms)....` Copilot will suggest the loop structure, the `Stop-AzVM` command, and `Write-Output` statements for logging.
+
+    - **Review and Refine:** Review the entire script generated by Copilot. Ensure it meets all requirements, handles potential errors (perhaps by adding a `try/catch` block, which can also be prompted), and follows organizational coding standards.
+
+### **Exercise 3: Generating Terraform for a Core Web Application**
+
+**Objective:** To use `@azure` chat to generate a complete Terraform configuration for a multi-resource Azure deployment, and then iteratively refine it based on changing requirements.
+
+**Scenario:** A DevOps engineer needs to provision the infrastructure for a new web application. The initial architecture consists of a Linux App Service Plan (B1 tier), a Web App configured for a Node.js runtime, and an Azure SQL Database. A firewall rule must be configured on the SQL server to allow access from Azure services.
+
+**Hands-On Steps:**
+
+1. **Initial Generation:** In VS Code, open the Copilot Chat pane.  
+   * **Prompt:** `@azure Use Terraform to create an Azure infrastructure. It should include a resource group named 'tf-webapp-rg'. Inside this group, create a Linux App Service Plan with the B1 SKU. Also create an App Service web app configured for Node.js. Finally, provision an Azure SQL Server and a SQL Database named 'appdb'.`  
+2. **Review the Output:** Copilot will generate a set of Terraform resources in a single main.tf block. Review the code, noting the resource types (  
+   `azurerm_resource_group`, `azurerm_service_plan`, `azurerm_linux_web_app`, `azurerm_mssql_server`, `azurerm_mssql_database`).  
+3. **Iterative Refinement:** The initial output may be missing specific configurations. Use follow-up prompts to refine the code.  
+   * **Prompt:** `@azure Add a firewall rule to the SQL server to allow all Azure services to access it.`  
+   * Copilot should add an `azurerm_mssql_firewall_rule` resource with the special `start_ip_address` and `end_ip_address` of `0.0.0.0`.  
+4. **Add Variables and Outputs:** Make the configuration more reusable.  
+   * **Prompt:** `@azure Refactor this code to use variables for the resource group name, location, and SQL administrator login. Also, add an output for the web app's default hostname.`  
+   * Copilot will introduce a `variables.tf` block (or inline variables) and an `outputs.tf` block.  
+5. **Validation:** Copy the final generated code into `main.tf`, `variables.tf`, and `outputs.tf` files. In the terminal, run `terraform init`, `terraform validate`, and `terraform plan` to verify the configuration. This step is crucial, as complex AI-generated templates can sometimes contain inaccuracies.
+
+### **Exercise 4: Refactoring Bicep for Reusability and Best Practices**
+
+**Objective:** To demonstrate Copilot's ability to analyze existing Bicep code, explain its functionality, and suggest refactoring improvements, such as modularization and alignment with published Azure best practices.
+
+**Scenario:** A developer has a single, monolithic main.bicep file that deploys an Azure Key Vault, a system-assigned Managed Identity for a web app, and a role assignment granting the identity 'get' and 'list' permissions on the Key Vault's secrets. They want to refactor this into reusable modules and ensure the configuration aligns with the security recommendations from the Azure product group.
+
+**Hands-On Steps:**
+
+1. **Generate Initial Code:** First, use Copilot to generate the monolithic Bicep file.  
+   * **Prompt:** `@azure Give me a Bicep template for creating a web app with a system-assigned identity, a key vault, and a role assignment for the managed identity to access the key vault secrets.`
+2. **Code Explanation:** Highlight the entire generated Bicep code in the editor. Open Copilot Chat and ask it to explain the code.  
+   * **Prompt:** `/explain`
+   * Copilot will break down each resource, parameter, and variable, explaining its purpose. This is the first step in understanding the code before refactoring.  
+3. **Context-Aware Refactoring:** This is the key step. Provide Copilot with a "golden standard" to compare against.  
+   * **Prompt:** `@azure Act as a cloud solutions architect. Using the sample Bicep template from https://github.com/Azure-Samples/app-service-web-app-best-practice/blob/main/sample.bicep as your reference for best practices, review my open Bicep file. Suggest how to refactor it into separate modules for the Key Vault and the Web App. Also, suggest any changes needed to align with the best practices from the reference file, such as enabling HTTPS only on the web app.`
+4. **Apply Suggestions:** Copilot will suggest creating new files (e.g., `keyvault.bicep`, `webapp.bicep`) and modifying `main.bicep` to call these as modules. It will also suggest adding or modifying properties on the resources to align with the provided best-practice example.  
+5. **Review and Deploy:** Review the modularized code. The `main.bicep` file should now be much simpler, orchestrating the deployment of the modules. Deploy the refactored code using the Azure CLI to verify its correctness.
+
+### **Exercise 5: Visualizing Architecture with Mermaid.js Diagrams**
+
+**Objective:** To use Copilot Chat to generate a Mermaid.js diagram from a natural language description of an Azure architecture, enabling rapid visualization and documentation.
+
+**Scenario:** A solution architect is preparing a design document for a new cloud-native application. They need to quickly create a clear, high-level architecture diagram to include in their Markdown document. The architecture involves a user's browser interacting with a front-end application hosted on Azure Static Web Apps. The front-end calls a serverless back-end API built with Azure Functions. The API communicates asynchronously with a worker process via an Azure Service Bus queue and stores state in an Azure Cosmos DB database.
+
+**Hands-On Steps:**
+
+1. **Open a Markdown File:** In VS Code, create a new file named `architecture.md`.  
+2. **Initial Prompt:** In the Copilot Chat pane, describe the architecture in detail.  
+   * **Prompt:** `Create a Mermaid diagram showing a top-to-bottom flowchart of a cloud-native architecture. Start with a 'User' who connects to a 'Frontend App (Azure Static Web Apps)'. The Frontend App calls a 'Backend API (Azure Functions)'. The Backend API communicates with a 'Message Queue (Azure Service Bus)' and a 'Database (Azure Cosmos DB)'.`
+3. **Generate Mermaid Syntax:** Copilot will generate a code block containing the Mermaid.js syntax for the described flowchart.16 The response will look something like this:  
+   Code snippet  
+    ```mermaid
+    graph TD
+        User[User] --> Frontend["Frontend App (Azure Static Web Apps)"]
+        Frontend --> API["Backend API (Azure Functions)"]
+        API --> DB["Database (Cosmos DB)"]
+        API --> MQ["Message Queue (Azure Service Bus)"]
+        MQ --> Worker["Async Processor (Azure Functions)"]
+    ```
+4. **Embed and Preview:** Copy the `mermaid` code block into the `architecture.md file`. VS Code has native support for previewing Mermaid diagrams in Markdown files. Open the Markdown preview to see the rendered diagram.
+5. **Refine with the @mermaid-chart Extension:** For more complex diagrams or questions, install the Mermaid Chart extension from the GitHub Marketplace.
+   * **Prompt:** `How can I change the shape of the 'Database (Cosmos DB)' node to look more like a database cylinder?`
+   * The extension will provide guidance on the specific syntax required, enhancing the visual clarity of the diagram.
+
+
+### **Exercise 6: Generating and Modifying SQL Database Schemas**
+
+**Objective:** To demonstrate how to provide schema context to GitHub Copilot to generate accurate DDL (Data Definition Language) for creating new tables and DML (Data Manipulation Language) for writing stored procedures in an Azure SQL database.
+
+**Scenario:** A database administrator is working on an e-commerce database. An existing Customers table is already defined. Their task is to create a new Orders table that includes a foreign key relationship to the Customers table. After the table is created, they need to write a T-SQL stored procedure that joins the two tables to retrieve all orders for a specific customer ID.
+
+**Hands-On Steps:**
+
+1. **Establish Context:** The success of this exercise hinges on providing Copilot with the schema of the existing `Customers` table. There are two primary methods:  
+   * **Manual Context (in a .sql file):** Create a new file, schema.sql. At the top of the file, paste the CREATE TABLE statement for the Customers table. This makes the schema visible in Copilot's context window.
+     ```sql  
+     -- Existing Schema Context  
+     CREATE TABLE SalesLT.Customer (  
+         CustomerID INT PRIMARY KEY,  
+         FirstName NVARCHAR(50),  
+         LastName NVARCHAR(50),  
+         EmailAddress NVARCHAR(255)  
+     );
+     ```
+
+   * **Automatic Context (with `@mssql`):** In VS Code, install the MSSQL extension. Connect to your Azure SQL database. This allows the @mssql chat participant to automatically access the database context.21  
+2. **Generate DDL:** With the context established, prompt Copilot to create the new table.  
+   * **Prompt (in chat with `@mssql` or as a comment in the `.sql` file):** `Generate a T-SQL CREATE TABLE statement for a new table named 'SalesLT.Orders'. It should have an 'OrderID' as a primary key, an 'OrderDate' of type datetime, and a 'TotalAmount' decimal. It must also include a 'CustomerID' integer column that is a foreign key referencing the 'CustomerID' in the 'SalesLT.Customer' table.`  
+3. **Generate Stored Procedure:** After generating the `Orders` table, prompt Copilot to create the stored procedure.  
+   * **Prompt:** `Write a SQL stored procedure named 'SalesLT.GetCustomerOrders'. It should accept a '@CustomerID' integer parameter. The procedure should retrieve all columns from the 'SalesLT.Orders' table for the matching customer. It should join with the 'SalesLT.Customer' table to also include the customer's FirstName and LastName. Ensure it follows T-SQL best practices.`  
+4. **Review and Execute:** Copilot will generate the complete `CREATE PROCEDURE` statement. Review the generated SQL for correctness, ensuring the join condition and parameter usage are accurate. Execute the scripts against the database to create the new objects.
+
+
+### **Exercise 7: Authoring a Multi-Stage Dockerfile**
+
+**Objective:** To use the Docker for GitHub Copilot extension to generate a best-practice, multi-stage Dockerfile for a sample Python application, optimizing for final image size and security.
+
+**Scenario:** A developer needs to containerize a Python Flask web application. To follow modern containerization best practices, they want to use a multi-stage build. The first stage will use a full Python image to install dependencies from a `requirements.txt` file. The second, final stage will use a smaller, slim base image and copy only the necessary application code and installed dependencies, resulting in a minimal production-ready image that excludes build tools and source code.
+
+**Hands-On Steps:**
+
+1. **Prerequisites:** Create a simple Python Flask application (e.g., `app.py`) and a `requirements.txt` file listing its dependencies (e.g., `Flask`). Install the Docker for GitHub Copilot extension from the GitHub Marketplace.
+2. **Open Copilot Chat:** With the project folder open in VS Code, open the Copilot Chat pane.
+3. **Invoke the Docker Extension:** Use the `@docker` agent to make the request.
+   * **Prompt:** `@docker generate a multi-stage Dockerfile for this Python Flask application. Use a full python image in the build stage to install dependencies from requirements.txt. For the final stage, use a slim python image and copy the application and dependencies. The final image should run the application using gunicorn.`
+4. **Review the Generated Dockerfile:** The Docker extension, trained on Docker's official documentation and best practices, will generate a Dockerfile. It will likely include:
+   * A `build` stage (`FROM python:3.9 as builder`) that installs dependencies.
+   * A final stage (`FROM python:3.9-slim`) that sets up a non-root user for security.
+   * `COPY --from=builder` commands to copy only the necessary artifacts.
+   * An `EXPOSE` instruction and a `CMD` to run the application.
+5. **Generate .dockerignore:** A well-crafted `.dockerignore` file prevents unnecessary files from being sent to the Docker daemon, speeding up builds and reducing image size.
+   * **Prompt:** `@docker now generate a suitable .dockerignore file for a python project.`
+   * Copilot will generate a file that excludes common artifacts like `__pycache__`, `.venv`, and `.git`.
+6. **Build and Test:** Use the generated files to build the container image locally (`docker build -t my-flask-app .`) and run it to verify functionality.
