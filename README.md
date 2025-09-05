@@ -1001,3 +1001,21 @@ az account show
    * **Prompt:** `@docker now generate a suitable .dockerignore file for a python project.`
    * Copilot will generate a file that excludes common artifacts like `__pycache__`, `.venv`, and `.git`.
 6. **Build and Test:** Use the generated files to build the container image locally (`docker build -t my-flask-app .`) and run it to verify functionality.
+
+### **Exercise 8: Scaffolding Kubernetes Manifests for AKS**
+
+**Objective:** To use GitHub Copilot to generate the standard Kubernetes YAML manifest files (Deployment and Service) required to deploy a containerized application to an Azure Kubernetes Service (AKS) cluster.
+
+**Scenario:** A DevOps engineer has a container image, `myacr.azurecr.io/my-flask-app:v1.0`, available in an Azure Container Registry (ACR). They need to create the Kubernetes manifests to deploy this image to an existing AKS cluster. The deployment should run three replicas of the application, and a `LoadBalancer` service must be created to expose the application to the internet on port 80.
+
+**Hands-On Steps:**
+
+1. **Create Manifest Files:** In VS Code, create two new empty files: `deployment.yaml` and `service.yaml`.  
+2. **Generate the Deployment Manifest:** Open `deployment.yaml`. Use a comment-driven prompt or the chat pane to generate the content.  
+   * **Prompt (in chat):** `Generate a Kubernetes Deployment YAML manifest. The deployment should be named 'flask-app-deployment'. It needs to manage 3 replicas. The container image is 'myacr.azurecr.io/my-flask-app:v1.0' and it exposes port 5000.`
+3. **Review and Paste:** Copilot will generate the complete YAML for the Deployment resource, including `apiVersion`, `kind`, `metadata`, and a detailed `spec` with the replica count, selector, and container template. Paste this into `deployment.yaml`.  
+4. **Generate the Service Manifest:** Open `service.yaml`.  
+   * **Prompt (in chat):** `Now, generate a Kubernetes Service YAML manifest to expose the 'flask-app-deployment'. The service should be named 'flask-app-service' and must be of type 'LoadBalancer'. It should expose port 80 to the internet and route traffic to the container's target port 5000.`  
+5. **Review and Apply:** Copilot will generate the YAML for the Service resource. Note how it correctly sets the selector to match the labels of the pods created by the deployment. Paste this into `service.yaml`. Use `kubectl apply -f .` to deploy both manifests to the connected AKS cluster.  
+6. **Integration with `@azure`:** Explore how the @azure extension can assist with deployment and management tasks for AKS.23  
+   * **Prompt:** `@azure what is the kubectl command to get all services in my AKS cluster with external IPs?`
