@@ -827,9 +827,7 @@ az account show
 
 **Scenario:** A cloud engineer has been tasked with creating the initial resources for a new project. They need to provision a new resource group in the 'West US 3' region, a general-purpose v2 storage account with geo-redundant storage (GRS), and a blob container named 'logs' within that account. This task needs to be completed quickly and accurately without leaving the development environment.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. Using `gh copilot suggest`: In the VS Code terminal, use the GitHub CLI integration to ask for a command.
     - Prompt: `gh copilot suggest "az cli command to create a resource group named 'copilot-workshop-rg' in westus3"`
@@ -850,9 +848,8 @@ az account show
 
 **Scenario:** An automation specialist is tasked with creating a cost-saving measure. They need to write a PowerShell runbook that runs on a schedule, finds all virtual machines tagged with auto-shutdown: true, and gracefully stops them. The script must be robust, handle authentication via a system-assigned managed identity, and include logging.
 
-<details>
+<details><summary>Hands-On Steps</summary>
 
-**Hands-On Steps:**
 1. **Setup:** Create a new PowerShell file in VS Code, for example, Stop-TaggedVMs.ps1.
 2. **Prompting with Comments:** Start the script with a detailed comment describing its purpose. This comment serves as a powerful prompt for Copilot's inline suggestions.
     - **Initial Comment:**
@@ -882,9 +879,7 @@ az account show
 
 **Scenario:** A DevOps engineer needs to provision the infrastructure for a new web application. The initial architecture consists of a Linux App Service Plan (B1 tier), a Web App configured for a Node.js runtime, and an Azure SQL Database. A firewall rule must be configured on the SQL server to allow access from Azure services.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Initial Generation:** In VS Code, open the Copilot Chat pane.  
    * **Prompt:** `@azure Use Terraform to create an Azure infrastructure. It should include a resource group named 'tf-webapp-rg'. Inside this group, create a Linux App Service Plan with the B1 SKU. Also create an App Service web app configured for Node.js. Finally, provision an Azure SQL Server and a SQL Database named 'appdb'.`  
@@ -899,15 +894,13 @@ az account show
 5. **Validation:** Copy the final generated code into `main.tf`, `variables.tf`, and `outputs.tf` files. In the terminal, run `terraform init`, `terraform validate`, and `terraform plan` to verify the configuration. This step is crucial, as complex AI-generated templates can sometimes contain inaccuracies.
 </details>
 
-### **Exercise 4: Refactoring Bicep for Reusability and Best Practices**
 
+### **Exercise 4: Refactoring Bicep for Reusability and Best Practices**
 **Objective:** To demonstrate Copilot's ability to analyze existing Bicep code, explain its functionality, and suggest refactoring improvements, such as modularization and alignment with published Azure best practices.
 
 **Scenario:** A developer has a single, monolithic main.bicep file that deploys an Azure Key Vault, a system-assigned Managed Identity for a web app, and a role assignment granting the identity 'get' and 'list' permissions on the Key Vault's secrets. They want to refactor this into reusable modules and ensure the configuration aligns with the security recommendations from the Azure product group.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Generate Initial Code:** First, use Copilot to generate the monolithic Bicep file.  
    * **Prompt:** `@azure Give me a Bicep template for creating a web app with a system-assigned identity, a key vault, and a role assignment for the managed identity to access the key vault secrets.`
@@ -922,14 +915,11 @@ az account show
 
 
 ### **Exercise 5: Visualizing Architecture with Mermaid.js Diagrams**
-
 **Objective:** To use Copilot Chat to generate a Mermaid.js diagram from a natural language description of an Azure architecture, enabling rapid visualization and documentation.
 
 **Scenario:** A solution architect is preparing a design document for a new cloud-native application. They need to quickly create a clear, high-level architecture diagram to include in their Markdown document. The architecture involves a user's browser interacting with a front-end application hosted on Azure Static Web Apps. The front-end calls a serverless back-end API built with Azure Functions. The API communicates asynchronously with a worker process via an Azure Service Bus queue and stores state in an Azure Cosmos DB database.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Open a Markdown File:** In VS Code, create a new file named `architecture.md`.  
 2. **Initial Prompt:** In the Copilot Chat pane, describe the architecture in detail.  
@@ -952,14 +942,11 @@ az account show
 
 
 ### **Exercise 6: Generating and Modifying SQL Database Schemas**
-
 **Objective:** To demonstrate how to provide schema context to GitHub Copilot to generate accurate DDL (Data Definition Language) for creating new tables and DML (Data Manipulation Language) for writing stored procedures in an Azure SQL database.
 
 **Scenario:** A database administrator is working on an e-commerce database. An existing Customers table is already defined. Their task is to create a new Orders table that includes a foreign key relationship to the Customers table. After the table is created, they need to write a T-SQL stored procedure that joins the two tables to retrieve all orders for a specific customer ID.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Establish Context:** The success of this exercise hinges on providing Copilot with the schema of the existing `Customers` table. There are two primary methods:  
    * **Manual Context (in a .sql file):** Create a new file, schema.sql. At the top of the file, paste the CREATE TABLE statement for the Customers table. This makes the schema visible in Copilot's context window.
@@ -983,14 +970,11 @@ az account show
 
 
 ### **Exercise 7: Authoring a Multi-Stage Dockerfile**
-
 **Objective:** To use the Docker for GitHub Copilot extension to generate a best-practice, multi-stage Dockerfile for a sample Python application, optimizing for final image size and security.
 
 **Scenario:** A developer needs to containerize a Python Flask web application. To follow modern containerization best practices, they want to use a multi-stage build. The first stage will use a full Python image to install dependencies from a `requirements.txt` file. The second, final stage will use a smaller, slim base image and copy only the necessary application code and installed dependencies, resulting in a minimal production-ready image that excludes build tools and source code.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Prerequisites:** Create a simple Python Flask application (e.g., `app.py`) and a `requirements.txt` file listing its dependencies (e.g., `Flask`). Install the Docker for GitHub Copilot extension from the GitHub Marketplace.
 2. **Open Copilot Chat:** With the project folder open in VS Code, open the Copilot Chat pane.
@@ -1007,15 +991,13 @@ az account show
 6. **Build and Test:** Use the generated files to build the container image locally (`docker build -t my-flask-app .`) and run it to verify functionality.
 </details>
 
-### **Exercise 8: Scaffolding Kubernetes Manifests for AKS**
 
+### **Exercise 8: Scaffolding Kubernetes Manifests for AKS**
 **Objective:** To use GitHub Copilot to generate the standard Kubernetes YAML manifest files (Deployment and Service) required to deploy a containerized application to an Azure Kubernetes Service (AKS) cluster.
 
 **Scenario:** A DevOps engineer has a container image, `myacr.azurecr.io/my-flask-app:v1.0`, available in an Azure Container Registry (ACR). They need to create the Kubernetes manifests to deploy this image to an existing AKS cluster. The deployment should run three replicas of the application, and a `LoadBalancer` service must be created to expose the application to the internet on port 80.
 
-<details>
-
-**Hands-On Steps:**
+<details><summary>Hands-On Steps</summary>
 
 1. **Create Manifest Files:** In VS Code, create two new empty files: `deployment.yaml` and `service.yaml`.  
 2. **Generate the Deployment Manifest:** Open `deployment.yaml`. Use a comment-driven prompt or the chat pane to generate the content.  
@@ -1026,4 +1008,4 @@ az account show
 5. **Review and Apply:** Copilot will generate the YAML for the Service resource. Note how it correctly sets the selector to match the labels of the pods created by the deployment. Paste this into `service.yaml`. Use `kubectl apply -f .` to deploy both manifests to the connected AKS cluster.  
 6. **Integration with `@azure`:** Explore how the @azure extension can assist with deployment and management tasks for AKS.23  
    * **Prompt:** `@azure what is the kubectl command to get all services in my AKS cluster with external IPs?`
-</details>   
+</details>
