@@ -64,32 +64,15 @@ GitHub Copilot is an AI-powered coding assistant developed by GitHub in collabor
 ---
 
 ## Module 2: Installation and Basic Configuration
+- GitHub Copilot now spans across IDEs, GitHub.com, CLI, Desktop, and Mobile, offering conversational coding, commit assistance, and real-time web search. The **Editor Preview** features introduce experimental capabilities like multi-file edits and next-step suggestions. **Copilot Extensions** allow integration of third-party tools via GitHub Marketplace, while the **Dashboard Entry Point** centralizes access to models, extensions, and settings. The **Copilot Coding Agent** (Preview) autonomously handles GitHub issues and opens PRs, powered by **MCP servers** for scalable orchestration. Model support is consolidated across three families:
+
+- **OpenAI**: o3, o3-mini, o4-mini (Preview), and GPT-5 (Preview) for advanced reasoning and fast response.
+- **Anthropic Claude**: Sonnet 3.5, 3.7, 4, and Opus 4 for nuanced logic and multi-turn coherence.
+- **Google Gemini**: 2.0 Flash and 2.5 Pro (Preview) for lightweight and multimodal tasks.
 
 ### Github Copilot Settings
 - [Github Copilot Features](https://github.com/settings/copilot/features)
   ![Github Copilot Policy](./images/Github-Copilot-Policy.png)
-- Features:
-  - Editor preview features
-  - Copilot in GitHub.com
-  - Copilot in the CLI
-  - Copilot Extensions
-  - Copilot in GitHub Desktop
-  - Copilot Chat in the IDE
-  - Copilot Chat in GitHub Mobile
-  - Copilot can search the web
-  - Anthropic Claude 3.5 Sonnet in Copilot
-  - Anthropic Claude 3.7 Sonnet in Copilot
-  - Anthropic Claude Sonnet 4 in Copilot
-  - Anthropic Claude Opus 4 in Copilot
-  - Google Gemini 2.0 Flash in Copilot
-  - Google Gemini 2.5 Pro in Copilot(Preview)
-  - OpenAI o3 in Copilot(Preview)
-  - OpenAI o3-mini in Copilot
-  - OpenAI o4-mini in Copilot(Preview)
-  - OpenAI GPT-5 (Preview)
-  - Dashboard entry point
-  - Copilot coding agent(Preview)
-  - MCP servers in Copilot
 
 ### Content Exclusion
 You can prevent Copilot from accessing certain content, and review any changes to these settings. The feature is available from organizations with a Copilot Business or Copilot Enterprise plan.
@@ -192,8 +175,8 @@ graph TD
 
 ## Module 4: Customization and Fine-Tuning
 
-## Fine-Tuned Models + Custom Instructions
-- Custom completion model
+## Custom Models + Custom Instructions
+- Custom model
   ```mermaid
   graph TD
       subgraph "Deep Customization"
@@ -240,15 +223,8 @@ graph TD
 - Fine-tuning models
   - Copilot supports fine-tuning models with your own data, allowing you to create custom models tailored to your specific needs.
   - Fine-tuning is available for both GitHub Enterprise Cloud and GitHub Enterprise Server.
-  - You can use the [GitHub Copilot Fine-Tuning Guide](https://docs.github.com/en/copilot/how-tos/fine-tune-copilot-models) to learn how to fine-tune models with your own data.
-  - `.vscode/settings.json` configuration
-  ```JSON
-  {
-    "github.copilot.advanced": {
-        "debug.overrideEngine": "copilot-prod-finetune-centralus.gh-msft-innersource-r4a9r17564c7"
-    }
-  }
-  ```
+  - You can use the [Creating a custom model for GitHub Copilot](https://docs.github.com/en/enterprise-cloud@latest/copilot/how-tos/use-ai-models/create-a-custom-model) to learn how to fine-tune models with your own data.
+  NOTE: Custom models for GitHub Copilot Enterprise will be discontinued.
 
 ---
 
