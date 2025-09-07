@@ -39,6 +39,8 @@ This workshop guides you through installation, core features, chat capabilities,
 ## Module 1: Overview and Key Concepts
 GitHub Copilot is an AI-powered coding assistant developed by GitHub in collaboration with OpenAI. It is designed to help developers write code more efficiently by providing real-time suggestions and automations within their integrated development environment (IDE).
 
+GitHub Copilot now spans across IDEs, GitHub.com, CLI, Desktop, and Mobile, offering conversational coding, commit assistance, and real-time web search. The **Editor Preview** features introduce experimental capabilities like multi-file edits and next-step suggestions. **Copilot Extensions** allow integration of third-party tools via GitHub Marketplace, while the **Dashboard Entry Point** centralizes access to models, extensions, and settings. The **Copilot Coding Agent** (Preview) autonomously handles GitHub issues and opens PRs, powered by **MCP servers** for scalable orchestration. Model support is consolidated across three families:
+
 ### Key Features and Functionalities
 - Get code suggestions as you type
 - Make large-scale changes across multiple files
@@ -61,14 +63,14 @@ GitHub Copilot is an AI-powered coding assistant developed by GitHub in collabor
 - Analyzing code changes in a pull request and generating summaries
 - Letting AI directly modify code in Agent mode
 
----
-
-## Module 2: Installation and Basic Configuration
-- GitHub Copilot now spans across IDEs, GitHub.com, CLI, Desktop, and Mobile, offering conversational coding, commit assistance, and real-time web search. The **Editor Preview** features introduce experimental capabilities like multi-file edits and next-step suggestions. **Copilot Extensions** allow integration of third-party tools via GitHub Marketplace, while the **Dashboard Entry Point** centralizes access to models, extensions, and settings. The **Copilot Coding Agent** (Preview) autonomously handles GitHub issues and opens PRs, powered by **MCP servers** for scalable orchestration. Model support is consolidated across three families:
-
+### Supported Models
 - **OpenAI**: o3, o3-mini, o4-mini (Preview), and GPT-5 (Preview) for advanced reasoning and fast response.
 - **Anthropic Claude**: Sonnet 3.5, 3.7, 4, and Opus 4 for nuanced logic and multi-turn coherence.
 - **Google Gemini**: 2.0 Flash and 2.5 Pro (Preview) for lightweight and multimodal tasks.
+
+---
+
+## Module 2: Installation and Basic Configuration
 
 ### Github Copilot Settings
 - [Github Copilot Features](https://github.com/settings/copilot/features)
