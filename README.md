@@ -738,6 +738,22 @@ Generate a React web application scaffold based on the components and layout def
 ```
 ![Github Copilot Figma](./images/Github-Copilot-Figma.png)
 
+### README.md to Slides
+You can use GitHub Copilot to automatically convert README.md documentation into PowerPoint presentation slides, streamlining the process of creating presentations from existing project documentation.
+
+This repository includes a `create-pptx.prompt.md` file that provides the instructions for generating a PowerPoint presentation from README content.
+
+**Steps to generate slides:**
+1. In GitHub Copilot agent mode, execute the `/create-pptx` command
+2. This will create a file named `README-slides.md` containing the slide-formatted content
+3. Run the following command to generate the PowerPoint file:
+   ```bash
+   uv run tools/md_to_pptx.py slides/README-slides.md slides/github-copilot-workshop.pptx
+   ```
+
+The generated PowerPoint will automatically format headings as slide titles, bullet points as slide content, and include any code blocks or images from the original documentation.
+
+
 ## Module 10: Hands-On Exercises
 
 ### Preparing for the Workshop
@@ -938,7 +954,7 @@ az account show
      );
      ```
 
-   * **Automatic Context (with `@mssql`):** In VS Code, install the MSSQL extension. Connect to your Azure SQL database. This allows the @mssql chat participant to automatically access the database context.21  
+   * **Automatic Context (with `@mssql`):** In VS Code, install the MSSQL extension. Connect to your Azure SQL database. This allows the @mssql chat participant to automatically access the database context.23  
 2. **Generate DDL:** With the context established, prompt Copilot to create the new table.  
    * **Prompt (in chat with `@mssql` or as a comment in the `.sql` file):** `Generate a T-SQL CREATE TABLE statement for a new table named 'SalesLT.Orders'. It should have an 'OrderID' as a primary key, an 'OrderDate' of type datetime, and a 'TotalAmount' decimal. It must also include a 'CustomerID' integer column that is a foreign key referencing the 'CustomerID' in the 'SalesLT.Customer' table.`  
 3. **Generate Stored Procedure:** After generating the `Orders` table, prompt Copilot to create the stored procedure.  
