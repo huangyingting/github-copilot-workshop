@@ -157,9 +157,9 @@ def add_title_slide(prs: Presentation, title: str, subtitle: Optional[str] = Non
         t_tf = slide.shapes.title.text_frame
         t_tf.word_wrap = True
         t_tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        # Reduce margins to maximize usable width
-        t_tf.margin_left = Inches(0.15)
-        t_tf.margin_right = Inches(0.15)
+        # Use minimal margins for maximum width usage
+        t_tf.margin_left = prs.slide_width * 0.01
+        t_tf.margin_right = prs.slide_width * 0.01
     except Exception:
         pass
     if subtitle:
@@ -168,8 +168,8 @@ def add_title_slide(prs: Presentation, title: str, subtitle: Optional[str] = Non
             s_tf = slide.placeholders[1].text_frame
             s_tf.word_wrap = True
             s_tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-            s_tf.margin_left = Inches(0.15)
-            s_tf.margin_right = Inches(0.15)
+            s_tf.margin_left = prs.slide_width * 0.01
+            s_tf.margin_right = prs.slide_width * 0.01
         except Exception:
             pass
     return slide
@@ -184,19 +184,19 @@ def add_bullets_slide(prs: Presentation, title: str, bullets: List[str]):
         t_tf = slide.shapes.title.text_frame
         t_tf.word_wrap = True
         t_tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        t_tf.margin_left = Inches(0.15)
-        t_tf.margin_right = Inches(0.15)
+        t_tf.margin_left = prs.slide_width * 0.01
+        t_tf.margin_right = prs.slide_width * 0.01
     except Exception:
         pass
 
     tf = slide.shapes.placeholders[1].text_frame
     tf.clear()
-    # Content shrink-to-fit and wrapping
+    # Content shrink-to-fit and wrapping with minimal margins
     try:
         tf.word_wrap = True
         tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        tf.margin_left = Inches(0.15)
-        tf.margin_right = Inches(0.15)
+        tf.margin_left = prs.slide_width * 0.015
+        tf.margin_right = prs.slide_width * 0.015
     except Exception:
         pass
     for idx, b in enumerate(bullets):
@@ -210,13 +210,16 @@ def add_bullets_slide(prs: Presentation, title: str, bullets: List[str]):
 
 
 def _content_box(prs: Presentation) -> Tuple[int, int, int, int]:
-    left = Inches(0.5)
-    right = Inches(0.5)
-    top = Inches(1.3)
-    bottom = Inches(0.5)
-    width = prs.slide_width - left - right
-    height = prs.slide_height - top - bottom
-    return left, top, width, height
+    # Use proportional margins based on slide width (about 3.75% on each side)
+    left_margin = prs.slide_width * 0.0375
+    right_margin = prs.slide_width * 0.0375
+    # Keep top margin proportional to height for title space
+    top_margin = prs.slide_height * 0.17  # About 17% for title
+    bottom_margin = prs.slide_height * 0.067  # About 6.7% bottom margin
+    
+    width = prs.slide_width - left_margin - right_margin
+    height = prs.slide_height - top_margin - bottom_margin
+    return left_margin, top_margin, width, height
 
 
 def add_code_slide(prs: Presentation, title: str, code: str):
@@ -228,19 +231,21 @@ def add_code_slide(prs: Presentation, title: str, code: str):
         t_tf = slide.shapes.title.text_frame
         t_tf.word_wrap = True
         t_tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        t_tf.margin_left = Inches(0.15)
-        t_tf.margin_right = Inches(0.15)
+        t_tf.margin_left = prs.slide_width * 0.01
+        t_tf.margin_right = prs.slide_width * 0.01
     except Exception:
         pass
     left, top, width, height = _content_box(prs)
     shape = slide.shapes.add_textbox(left, top, width, height)
     tf = shape.text_frame
     tf.word_wrap = True
-    # Shrink code text to fit the shape when needed
+    # Shrink code text to fit the shape when needed with minimal margins
     try:
         tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        tf.margin_left = Inches(0.15)
-        tf.margin_right = Inches(0.15)
+        tf.margin_left = prs.slide_width * 0.01
+        tf.margin_right = prs.slide_width * 0.01
+        tf.margin_top = prs.slide_height * 0.01
+        tf.margin_bottom = prs.slide_height * 0.01
     except Exception:
         pass
     p = tf.paragraphs[0]
@@ -297,24 +302,27 @@ def add_table_slide(prs: Presentation, title: str, rows: List[List[str]]):
         t_tf = slide.shapes.title.text_frame
         t_tf.word_wrap = True
         t_tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-        t_tf.margin_left = Inches(0.15)
-        t_tf.margin_right = Inches(0.15)
+        t_tf.margin_left = prs.slide_width * 0.01
+        t_tf.margin_right = prs.slide_width * 0.01
     except Exception:
         pass
     nrows = len(rows)
     ncols = max(len(r) for r in rows)
     left, top, width, max_h = _content_box(prs)
-    height = min(max_h, Inches(0.5) * max(2, nrows))
+    # Use more of the available height for tables
+    height = min(max_h, max_h * 0.8)  # Use up to 80% of available content height
     table = slide.shapes.add_table(nrows, ncols, left, top, width, height).table
     for r, row in enumerate(rows):
         for c in range(ncols):
             table.cell(r, c).text = row[c] if c < len(row) else ""
-            # Try to keep table text compact
+            # Try to keep table text compact with proportional margins
             try:
                 tf = table.cell(r, c).text_frame
                 tf.word_wrap = True
-                tf.margin_left = Inches(0.05)
-                tf.margin_right = Inches(0.05)
+                tf.margin_left = prs.slide_width * 0.005
+                tf.margin_right = prs.slide_width * 0.005
+                tf.margin_top = prs.slide_height * 0.005
+                tf.margin_bottom = prs.slide_height * 0.005
             except Exception:
                 pass
     return slide
