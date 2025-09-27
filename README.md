@@ -31,8 +31,9 @@ This workshop guides you through installation, core features, chat capabilities,
 - [Module 6: Copilot Chat](#module-6-copilot-chat)
 - [Module 7: Advanced Features and Agent Mode](#module-7-advanced-features-and-agent-mode)
 - [Module 8: Copilot Spaces](#module-8-copilot-spaces)
-- [Module 9: Use Cases](#module-9-use-cases)
-- [Module 10: Hands-On Exercises](#module-10-hands-on-exercises)
+- [Module 9: GitHub Copilot CLI](#module-9-github-copilot-cli)
+- [Module 10: Use Cases](#module-10-use-cases)
+- [Module 11: Hands-On Exercises](#module-11-hands-on-exercises)
 
 ---
 
@@ -543,7 +544,37 @@ Design an application that runs from kubernetes cluster, list key considerations
 
 ---
 
-## Module 9: Use Cases
+## Module 9: GitHub Copilot CLI
+GitHub Copilot CLI brings AI-powered coding assistance directly to your command line, enabling you to build, debug, and understand code through natural language conversations. Powered by the same agentic harness as GitHub's Copilot coding agent, it provides intelligent assistance while staying deeply integrated with your GitHub workflow.
+
+### Example
+```bash
+npm install -g @github/copilot
+copilot
+```
+
+- From within a project directory you can ask Copilot to make a change to the code in the project. For example:
+  - `Change the background-color of H1 headings to dark blue`
+  Copilot finds the CSS file where H1 headings are defined and changes the color value.
+
+- Ask Copilot to tell you about changes to a file:
+  - `Show me the last 5 changes made to the CHANGELOG.md file. Who changed the file, when, and give a brief summary of the changes they made`
+
+- Use Copilot to help you improve the code, or documentation, in your project.
+  - `Suggest improvements to content.js`
+  - `Rewrite the readme in this project to make it more accessible to newcomers`
+
+- Use Copilot to help you perform Git operations.
+  - `Commit the changes to this repo`
+  - `Revert the last commit, leaving the changes unstaged`
+
+- Ask Copilot to create an application from scratch—for example, as a proof of concept.
+  - `Use the create-next-app kit and tailwind CSS to create a next.js app. The app should be a dashboard built with data from the GitHub API. It should track this project's build success rate, average build duration, number of failed builds, and automated test pass rate. After creating the app, give me easy to follow instructions on how to build, run, and view the app in my browser.`
+
+- Ask Copilot to explain why a change it made is not working as expected, or tell Copilot to fix a problem with the last change it made. For example:
+  - `You said: "The application is now running on http://localhost:3002 and is fully functional!" but when I browse to that URL I get "This site can't be reached"`
+
+## Module 10: Use Cases
 
 ### Network Operations Planning
 By leveraging the custom chat mode in Github Copilot, you can create a more interactive and tailored experience for network operations planning. Here’s how you can use it:
@@ -754,7 +785,7 @@ This repository includes a `create-pptx.prompt.md` file that provides the instru
 The generated PowerPoint will automatically format headings as slide titles, bullet points as slide content, and include any code blocks or images from the original documentation.
 
 
-## Module 10: Hands-On Exercises
+## Module 11: Hands-On Exercises
 
 ### Preparing for the Workshop
 Prerequisites:
