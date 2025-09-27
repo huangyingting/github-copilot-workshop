@@ -275,7 +275,7 @@ Copilot is excellent at identifying patterns and saving you from typing boilerpl
 - `alt + [` previous suggestion
 
 
-### Next Edit Suggestions(NES)
+### Next Edit Suggestions (NES)
 With NES you make a change and then Copilot predicts the changes that follow and presents them to you in sequence. [Copilot Next Edit Suggestions](https://githubnext.com/projects/copilot-next-edit-suggestions/)
 
 1. Open Python file `models.py`.
