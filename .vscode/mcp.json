@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"Microsoft Graph": {
+			"url": "https://mcp.graph.microsoft.com/",
+			"type": "http"
+		},
+		"Figma": {
+			"url": "https://mcp.figma.com/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
