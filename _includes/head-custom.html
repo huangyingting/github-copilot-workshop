@@ -45,6 +45,10 @@
     transition: background-color .15s ease, box-shadow .15s ease, transform .08s ease;
     will-change: background-color, box-shadow, transform;
     max-width: 56px;   /* cap width for compact buttons */
+    cursor: pointer;
+    /* Improve touch targets for mobile accessibility */
+    min-height: 44px;
+    min-width: 44px;
   }
   .issue-fab:hover {
     background-color: var(--btn-bg-hover); /* text color intentionally unchanged */
@@ -100,6 +104,17 @@
     .issue-fab:hover { transform: none; }
     .issue-fab__tooltip { transition: none; }
   }
+
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .issue-fab {
+      inset-inline-end: 12px;
+      inset-block-end: calc(12px + env(safe-area-inset-bottom, 0));
+    }
+    .issue-fab--docs {
+      inset-block-end: calc(68px + env(safe-area-inset-bottom, 0));
+    }
+  }
 </style>
 
 <script>
@@ -117,7 +132,8 @@
   bugBtn.target = "_blank";
   bugBtn.rel = "noopener";
   bugBtn.className = "issue-fab";
-  bugBtn.ariaLabel = "Report a code bug";
+  bugBtn.setAttribute("aria-label", "Report a code bug");
+  bugBtn.setAttribute("role", "button");
   // replace visible text with icon + tooltip
   bugBtn.innerHTML = '<span class="issue-fab__icon" aria-hidden="true">🐞</span><span class="issue-fab__tooltip" role="tooltip">Report bug</span>';
 
@@ -132,7 +148,8 @@
   docsBtn.target = "_blank";
   docsBtn.rel = "noopener";
   docsBtn.className = "issue-fab issue-fab--docs";
-  docsBtn.ariaLabel = "Report a documentation issue";
+  docsBtn.setAttribute("aria-label", "Report a documentation issue");
+  docsBtn.setAttribute("role", "button");
   // replace visible text with icon + tooltip
   docsBtn.innerHTML = '<span class="issue-fab__icon" aria-hidden="true">📄</span><span class="issue-fab__tooltip" role="tooltip">Docs issue</span>';
 
@@ -140,24 +157,33 @@
     // Let natural widths settle first
     bugBtn.style.width = "";
     docsBtn.style.width = "";
-    const w1 = bugBtn.getBoundingClientRect().width;
-    const w2 = docsBtn.getBoundingClientRect().width;
-    const max = Math.max(w1, w2);
-    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const MAX = 56; // px cap to reduce width
-    const target = Math.min(max, MAX, vw * 0.92);
-    const px = Math.ceil(target) + "px";
-    bugBtn.style.width = px;
-    docsBtn.style.width = px;
+    
+    // Add error handling for getBoundingClientRect
+    try {
+      const w1 = bugBtn.getBoundingClientRect().width;
+      const w2 = docsBtn.getBoundingClientRect().width;
+      const max = Math.max(w1, w2);
+      const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const MAX = 56; // px cap to reduce width
+      const target = Math.min(max, MAX, vw * 0.92);
+      const px = Math.ceil(target) + "px";
+      bugBtn.style.width = px;
+      docsBtn.style.width = px;
+    } catch (error) {
+      console.warn('Failed to equalize button widths:', error);
+    }
   }
 
   function add() {
-    document.body.appendChild(bugBtn);
-    document.body.appendChild(docsBtn);
-    // Size after paint
-    requestAnimationFrame(equalizeWidths);
-    // Recalculate on resize (e.g., viewport/font changes)
-    window.addEventListener("resize", equalizeWidths, { passive: true });
+    // Ensure DOM elements are properly created before adding
+    if (bugBtn && docsBtn) {
+      document.body.appendChild(bugBtn);
+      document.body.appendChild(docsBtn);
+      // Size after paint
+      requestAnimationFrame(equalizeWidths);
+      // Recalculate on resize (e.g., viewport/font changes)
+      window.addEventListener("resize", equalizeWidths, { passive: true });
+    }
   }
 
   if (document.readyState === "loading") {

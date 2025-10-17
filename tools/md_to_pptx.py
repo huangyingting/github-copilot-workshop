@@ -2,17 +2,21 @@
 """
 Convert README.md into a PowerPoint deck.
 
-Features:
+This tool converts Markdown files into PowerPoint presentations with the following features:
 - H1 as title slide, H2/H3 as content slides
-- Bulleted lists
-- Code blocks as preformatted text boxes
+- Bulleted lists with proper formatting
+- Code blocks as preformatted text boxes with syntax highlighting
 - Images embedded if relative path exists
 - Simple tables from Markdown pipes
+- Mermaid diagram support (if mermaid CLI is available)
 
 Requirements: python-pptx, Pillow
 
 Usage:
-  uv run tools/md_to_pptx.py slides/README-slides.md slides/github-copilot-workshop.pptx
+  python tools/md_to_pptx.py <input.md> <output.pptx>
+  
+Example:
+  python tools/md_to_pptx.py slides/README-slides.md slides/github-copilot-workshop.pptx
 """
 from __future__ import annotations
 
@@ -329,19 +333,37 @@ def add_table_slide(prs: Presentation, title: str, rows: List[List[str]]):
 
 
 def _which(cmd: str) -> Optional[str]:
+    """
+    Find executable in PATH (similar to Unix 'which' command).
+    
+    Args:
+        cmd: Command name to search for
+        
+    Returns:
+        Full path to executable if found, None otherwise
+    """
     return shutil.which(cmd)
 
 
 def render_mermaid_to_png(code: str, workdir: Optional[str] = None) -> Optional[str]:
     """Render Mermaid code to a PNG file using mermaid-cli (mmdc) or npx fallback.
 
-    Returns the path to the PNG on success, otherwise None.
+    Args:
+        code: Mermaid diagram code
+        workdir: Working directory to use (creates temp dir if None)
+        
+    Returns:
+        Path to the generated PNG file on success, None otherwise
     """
     tmpdir = tempfile.mkdtemp(prefix="md2pptx_") if workdir is None else workdir
     mmd_path = os.path.join(tmpdir, "diagram.mmd")
     png_path = os.path.join(tmpdir, "diagram.png")
-    with open(mmd_path, "w", encoding="utf-8") as f:
-        f.write(code)
+    
+    try:
+        with open(mmd_path, "w", encoding="utf-8") as f:
+            f.write(code)
+    except IOError:
+        return None
 
     commands = []
     if _which("mmdc"):
@@ -393,11 +415,29 @@ def to_abs_path(base_dir: str, path: str) -> str:
     return os.path.join(base_dir, path)
 
 
-def generate_pptx(md_path: str, out_path: str):
-    with open(md_path, "r", encoding="utf-8") as f:
-        md = f.read()
+def generate_pptx(md_path: str, out_path: str) -> None:
+    """
+    Generate PowerPoint presentation from Markdown file.
+    
+    Args:
+        md_path: Path to input Markdown file
+        out_path: Path to output PowerPoint file
+        
+    Raises:
+        IOError: If input file cannot be read or output file cannot be written
+        ValueError: If Markdown parsing fails
+    """
+    try:
+        with open(md_path, "r", encoding="utf-8") as f:
+            md = f.read()
+    except IOError as e:
+        raise IOError(f"Cannot read input file '{md_path}': {e}")
 
-    blocks = parse_markdown(md)
+    try:
+        blocks = parse_markdown(md)
+    except Exception as e:
+        raise ValueError(f"Failed to parse Markdown: {e}")
+        
     prs = Presentation()
     # Set widescreen 16:9 slide size
     prs.slide_width = Inches(13.333)
@@ -512,18 +552,48 @@ def generate_pptx(md_path: str, out_path: str):
     flush_bullets(current_section or "Contents")
 
     # Ensure output dir exists
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    prs.save(out_path)
+    try:
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        prs.save(out_path)
+    except IOError as e:
+        raise IOError(f"Cannot write output file '{out_path}': {e}")
 
 
-def main(argv: List[str]):
+def main(argv: List[str]) -> int:
+    """
+    Main entry point for the script.
+    
+    Args:
+        argv: Command line arguments
+        
+    Returns:
+        Exit code (0 for success, 2 for usage error, 1 for other errors)
+    """
     if len(argv) < 3:
         print("Usage: python tools/md_to_pptx.py <input.md> <output.pptx>")
+        print("\nExample:")
+        print("  python tools/md_to_pptx.py README.md presentation.pptx")
         return 2
+    
     md_path, out_path = argv[1], argv[2]
-    generate_pptx(md_path, out_path)
-    print(f"Wrote {out_path}")
-    return 0
+    
+    # Validate input file exists
+    if not os.path.exists(md_path):
+        print(f"Error: Input file '{md_path}' does not exist")
+        return 1
+    
+    # Validate input file is readable
+    if not os.access(md_path, os.R_OK):
+        print(f"Error: Cannot read input file '{md_path}'")
+        return 1
+    
+    try:
+        generate_pptx(md_path, out_path)
+        print(f"Successfully wrote {out_path}")
+        return 0
+    except Exception as e:
+        print(f"Error generating PowerPoint: {e}")
+        return 1
 
 
 if __name__ == "__main__":
