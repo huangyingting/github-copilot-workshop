@@ -99,7 +99,9 @@ class TestEchoEndpoint:
     
     def test_echo_handles_empty_body(self, client):
         """Test that echo endpoint handles empty request body."""
-        response = client.post('/api/v1/echo')
+        response = client.post('/api/v1/echo', 
+                              json={},
+                              content_type='application/json')
         assert response.status_code == 200
         data = response.get_json()
         assert data['received'] == {}
