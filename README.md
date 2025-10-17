@@ -441,6 +441,296 @@ Copilot Extensions are integrations that expand the functionality of Copilot Cha
 ### MCP in Agent Mode
 When combined with Model Context Protocol (MCP) servers, agent mode becomes significantly more powerful, giving Copilot access to external resources without switching context. This enables Copilot to complete agentic "loops," where it can dynamically adapt its approach by autonomously finding relevant information, analyzing feedback, and making informed decisions.
 
+### GitHub Copilot Coding Agent
+
+The GitHub Copilot Coding Agent is an autonomous AI assistant that can independently complete development tasks end-to-end, from understanding requirements to creating pull requests. It operates within GitHub's ecosystem using GitHub Actions for a secure, isolated development environment.
+
+#### What is the Coding Agent?
+
+The Coding Agent is a specialized implementation of GitHub Copilot that can:
+- Autonomously complete entire development tasks without constant human guidance
+- Explore codebases, make changes, run builds and tests
+- Create branches, commits, and pull requests automatically
+- Provide detailed session logs for transparency
+- Work across GitHub Issues, VS Code, GitHub CLI, and GitHub Mobile
+
+#### Key Features and Capabilities
+
+**Autonomous Task Completion**
+- Fix bugs and resolve issues
+- Implement new features and functionality
+- Improve test coverage and write tests
+- Update documentation
+- Address technical debt and refactor code
+- Perform security updates and dependency upgrades
+
+**Seamless Integration**
+- Works directly within GitHub's ecosystem
+- Leverages GitHub Actions for isolated execution
+- Integrates with VS Code via GitHub Pull Requests extension
+- Accessible through GitHub CLI and Mobile apps
+- Operates within your repository's existing workflows
+
+**Automation and Transparency**
+- Automatically creates branches for new work
+- Generates meaningful commit messages
+- Opens pull requests with detailed descriptions
+- Provides comprehensive session logs
+- Documents decision-making process
+- Shows all changes for human review
+
+**Security and Control**
+- Runs in sandboxed GitHub Actions environments
+- Restricted internet access for security
+- Enforces branch protections
+- Requires human review before merging
+- Respects repository permissions and access controls
+- Complies with organization security policies
+
+#### How to Use the Coding Agent
+
+**Coding Agent Workflow**
+
+```mermaid
+graph TB
+    Start[Developer Creates Task] --> Method{Choose Method}
+    
+    Method -->|GitHub Issues| Issue[Create/Assign Issue to @copilot]
+    Method -->|VS Code| VSCode[Use Copilot Chat + Delegate]
+    Method -->|GitHub CLI| CLI[gh issue create --assignee @copilot]
+    Method -->|GitHub Mobile| Mobile[Assign via Mobile App]
+    
+    Issue --> Agent[Coding Agent Receives Task]
+    VSCode --> Agent
+    CLI --> Agent
+    Mobile --> Agent
+    
+    Agent --> Analyze[Analyze Repository Context]
+    Analyze --> Plan[Create Implementation Plan]
+    Plan --> Branch[Create Development Branch]
+    Branch --> Code[Write/Modify Code]
+    Code --> Test[Run Tests & Builds]
+    Test --> Commit[Generate Commits]
+    Commit --> PR[Create Pull Request]
+    
+    PR --> Review{Human Review}
+    Review -->|Changes Needed| Feedback[Provide Feedback]
+    Feedback --> Code
+    Review -->|Approved| Merge[Merge to Main]
+    
+    Merge --> Complete[Task Complete]
+    
+    style Start fill:#e1f5ff
+    style Agent fill:#fff3cd
+    style Review fill:#f8d7da
+    style Complete fill:#d4edda
+```
+
+**Method 1: Assign via GitHub Issues**
+1. Create or open a GitHub issue describing the task
+2. Assign the issue to `@copilot` using the assignee dropdown
+3. Copilot will analyze the issue and create a plan
+4. Monitor progress through issue comments
+5. Review the pull request when complete
+
+```markdown
+Example issue:
+Title: Add error handling to login function
+Description: The login function in auth.js needs proper error handling for network failures and invalid credentials.
+Assignee: @copilot
+```
+
+**Method 2: Delegate from VS Code**
+1. Install the GitHub Pull Requests extension
+2. Open the GitHub Copilot chat panel
+3. Type your task description
+4. Click "Delegate to Copilot Agent"
+5. Monitor progress in the editor
+
+```
+Example prompt:
+"Create a new API endpoint for user profile updates with validation and error handling"
+```
+
+**Method 3: GitHub CLI**
+```bash
+# Assign an existing issue to Copilot
+gh issue edit ISSUE_NUMBER --add-assignee @copilot
+
+# Create a new issue and assign to Copilot
+gh issue create --title "Add unit tests for payment module" --body "Need comprehensive unit tests covering all payment processing functions" --assignee @copilot
+```
+
+**Method 4: GitHub Mobile**
+1. Open the GitHub Mobile app
+2. Navigate to your repository
+3. Go to Issues and create or open an issue
+4. Tap the assignee field
+5. Select or type `@copilot`
+
+#### Best Practices
+
+**1. Write Clear and Specific Task Descriptions**
+- Provide context and background information
+- Specify the expected outcome
+- Include relevant file paths or components
+- Mention any constraints or requirements
+- Reference related issues or PRs
+
+Good example:
+```markdown
+Add pagination to the user list API endpoint (/api/users). 
+The endpoint should support page and limit query parameters.
+Default to 20 items per page, max 100.
+Update the API documentation in docs/api.md.
+Add tests in tests/api/users.test.js.
+```
+
+Bad example:
+```markdown
+Fix the users thing
+```
+
+**2. Break Down Complex Tasks**
+- Split large features into smaller, manageable issues
+- Create separate issues for different components
+- Use task lists in issue descriptions for multi-step work
+- Link related issues for context
+
+**3. Provide Relevant Context**
+- Reference existing code patterns in your codebase
+- Link to design documents or specifications
+- Include examples of desired behavior
+- Mention any coding standards or guidelines
+- Specify testing requirements
+
+**4. Monitor and Review Actively**
+- Check progress regularly through issue comments
+- Review pull requests promptly
+- Test the changes in your environment
+- Provide feedback on the implementation
+- Approve and merge after validation
+
+**5. Use Custom Instructions**
+Leverage repository-level instructions to guide the agent:
+
+Create `.github/copilot-instructions.md`:
+```markdown
+# Coding Agent Instructions
+
+- Use TypeScript for all new code
+- Follow the Airbnb style guide
+- Include JSDoc comments for all functions
+- Write unit tests using Jest
+- Update CHANGELOG.md for user-facing changes
+- Ensure all tests pass before creating PRs
+```
+
+#### Limitations and Considerations
+
+**Resource Consumption**
+- Uses GitHub Actions minutes from your account
+- Premium requests may incur additional costs
+- Monitor usage in your GitHub Actions dashboard
+
+**Task Complexity**
+- Works best with well-defined, focused tasks
+- May struggle with ambiguous or very complex requirements
+- Large-scale refactoring might need human guidance
+- Breaking down tasks improves success rate
+
+**Human Oversight Required**
+- Always review generated code before merging
+- Verify tests are meaningful and comprehensive
+- Check for security vulnerabilities
+- Ensure changes align with architectural decisions
+- Validate against your coding standards
+
+**Environment Constraints**
+- Limited to GitHub ecosystem
+- Requires GitHub Actions to be enabled
+- May need additional setup for private runners
+- Internet access is restricted for security
+
+#### Workflow Example
+
+Here's a complete workflow example for adding a new feature:
+
+1. **Create Issue**
+```markdown
+Title: Add user avatar upload feature
+
+Description:
+Add functionality for users to upload and update their profile avatars.
+
+Requirements:
+- Support JPG, PNG, and GIF formats
+- Max file size: 5MB
+- Automatically resize to 200x200px
+- Store in cloud storage (use existing uploadService)
+- Update user model with avatar URL
+- Add avatar display in user profile component
+
+Files to modify:
+- backend/services/userService.js
+- backend/routes/user.js
+- frontend/components/UserProfile.vue
+- backend/tests/userService.test.js
+
+Assignee: @copilot
+Labels: enhancement, frontend, backend
+```
+
+2. **Copilot Processing**
+- Analyzes the issue and repository context
+- Creates a development branch
+- Implements the changes across specified files
+- Runs existing tests
+- Creates new tests
+- Generates commit messages
+- Opens a pull request
+
+3. **Review Process**
+- Receive notification of new PR
+- Review code changes
+- Run the application locally
+- Test avatar upload functionality
+- Request changes if needed
+- Approve and merge when satisfied
+
+#### Troubleshooting
+
+**Agent Not Responding**
+- Verify Copilot is enabled for your repository
+- Check that GitHub Actions is enabled
+- Ensure you have proper permissions
+- Try reassigning the issue
+
+**Changes Don't Match Requirements**
+- Review your issue description for clarity
+- Add more specific context and examples
+- Break down the task into smaller pieces
+- Use comments to provide additional guidance
+
+**Tests Failing**
+- Review the test failures in the PR
+- Add comments requesting fixes
+- Provide specific guidance on test requirements
+- Consider manually fixing tests and requesting agent assistance
+
+**Agent Stuck or Taking Too Long**
+- Check GitHub Actions for any errors
+- Review the agent's comments for blockers
+- Consider simplifying the task
+- Unassign and manually complete if needed
+
+#### Additional Resources
+
+- [Official GitHub Copilot Coding Agent Documentation](https://docs.github.com/en/copilot/tutorials/coding-agent)
+- [VS Code Copilot Coding Agent Guide](https://code.visualstudio.com/docs/copilot/copilot-coding-agent)
+- [Microsoft Learn: Accelerate Development with Coding Agent](https://learn.microsoft.com/en-us/training/modules/github-copilot-code-agent/)
+- [GitHub Blog: Getting Started with Agentic Workflows](https://github.blog/ai-and-ml/github-copilot/github-copilot-coding-agent-101-getting-started-with-agentic-workflows-on-github/)
+
 ### Customize AI Responses
 [Community-contributed instructions, prompts, and configurations to help you make the most of GitHub Copilot.](https://github.com/github/awesome-copilot/)
 
