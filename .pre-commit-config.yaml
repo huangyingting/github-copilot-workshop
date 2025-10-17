@@ -1,0 +1,94 @@
+# GitHub Copilot Workshop - Pre-commit Configuration
+# Install: pip install pre-commit
+# Setup: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # Python code formatting with Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      # Run the formatter
+      - id: ruff-format
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Check for files that would conflict in case-insensitive filesystems
+      - id: check-case-conflict
+      
+      # Ensure files end with a newline
+      - id: end-of-file-fixer
+        exclude: '\.pptx$|\.png$|\.jpg$|\.jpeg$|\.gif$|\.pdf$'
+      
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      
+      # Check for merge conflict markers
+      - id: check-merge-conflict
+      
+      # Check YAML syntax
+      - id: check-yaml
+        args: [--safe]
+      
+      # Check JSON syntax
+      - id: check-json
+      
+      # Check TOML syntax
+      - id: check-toml
+      
+      # Prevent committing large files
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+        exclude: '\.pptx$|\.lock$'
+      
+      # Check Python syntax
+      - id: check-ast
+      
+      # Check for debugger imports
+      - id: debug-statements
+      
+      # Validate pyproject.toml
+      - id: check-toml
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.43.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
+        exclude: 'slides/README-slides.md'
+
+  # Dockerfile linting
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        args: [--ignore, DL3008, --ignore, DL3013]
+
+# Configure additional settings
+default_language_version:
+  python: python3.11
+
+# Files to exclude from all hooks
+exclude: |
+  (?x)^(
+    \.git/.*|
+    \.venv/.*|
+    __pycache__/.*|
+    \.pytest_cache/.*|
+    \.ruff_cache/.*|
+    uv\.lock|
+    .*\.pptx|
+    .*\.png|
+    .*\.jpg|
+    .*\.jpeg|
+    .*\.gif|
+    .*\.pdf|
+    .*\.log
+  )$

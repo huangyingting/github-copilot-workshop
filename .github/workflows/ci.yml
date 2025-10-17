@@ -1,0 +1,97 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install -r app/requirements.txt
+
+      - name: Run Ruff linter
+        run: |
+          ruff check . --output-format=github
+        continue-on-error: true
+
+      - name: Run Ruff formatter check
+        run: |
+          ruff format --check .
+        continue-on-error: true
+
+      - name: Run tests with pytest
+        run: |
+          cd app
+          pytest tests/ -v --cov=. --cov-report=xml --cov-report=term
+
+  check-copilot-files:
+    name: Validate Copilot Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for Copilot instructions
+        run: |
+          if [ -f .github/copilot-instructions.md ]; then
+            echo "✅ Repository Copilot instructions found"
+          else
+            echo "⚠️ Repository Copilot instructions not found"
+          fi
+
+      - name: Validate YAML frontmatter in prompts
+        run: |
+          cd .github/prompts
+          for file in *.prompt.md; do
+            if [ -f "$file" ]; then
+              echo "Checking $file"
+              if head -1 "$file" | grep -q "^---"; then
+                echo "✅ $file has YAML frontmatter"
+              else
+                echo "⚠️ $file missing YAML frontmatter"
+              fi
+            fi
+          done
+        continue-on-error: true
+
+      - name: Validate chat modes
+        run: |
+          cd .github/chatmodes
+          for file in *.chatmode.md; do
+            if [ -f "$file" ]; then
+              echo "Checking $file"
+              if head -1 "$file" | grep -q "^---"; then
+                echo "✅ $file has YAML frontmatter"
+              else
+                echo "⚠️ $file missing YAML frontmatter"
+              fi
+            fi
+          done
+        continue-on-error: true
