@@ -1,13 +1,16 @@
 {
+	"inputs": [],
 	"servers": {
-		"Microsoft Graph": {
-			"url": "https://mcp.graph.microsoft.com/",
-			"type": "http"
+		"playwright": {
+			"command": "npx",
+			"args": [
+				"@playwright/mcp@latest"
+			],
+			"type": "stdio"
 		},
-		"Figma": {
-			"url": "https://mcp.figma.com/mcp",
-			"type": "http"
+		"github": {
+			"type": "http",
+			"url": "https://api.githubcopilot.com/mcp/"
 		}
-	},
-	"inputs": []
+	}
 }
