@@ -214,3 +214,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Java / Maven
+*.class
+*.jar
+*.war
+*.ear
+java-hello-world/target/
